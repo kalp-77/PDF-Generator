@@ -56,9 +56,6 @@ class PictureFragment : Fragment() {
     private lateinit var pictureAdapter : PictureAdapter
     private lateinit var progressDialog: ProgressDialog
 
-    private var job = Job()
-    private var scopeForSaving = CoroutineScope(job + Dispatchers.Main)
-
     // picked image uri
     private var pictureUri : Uri? = null
     // ui
@@ -105,7 +102,7 @@ class PictureFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val itemId = item.itemId
+
         // handle delete of images
         when(item.itemId) {
             R.id.picture_delete -> {
@@ -160,31 +157,36 @@ class PictureFragment : Fragment() {
                     }
                 }
             }
+            Log.d(TAG, "convertPicturesToPdf: ${picturesToPdfList.size}")
             try {
                 val root = File(mContext.getExternalFilesDir(null), Constants.PDF_FOLDER)
                 root.mkdirs()
-
                 val timestamp = System.currentTimeMillis()
                 val fileName = "PDF_$timestamp.pdf"
                 val file = File(root, fileName)
                 val fileOutputStream = FileOutputStream(file)
                 val pdfDocument = PdfDocument()
                 var cnt = 0
-                for(picture in picturesToPdfList) {
-                    val pictureToPdfUri = picture.pictureUri
+                for(i in picturesToPdfList.indices) {
+                    val pictureToPdfUri = picturesToPdfList[i].pictureUri
                     try{
+                        Log.d(TAG, "convertPictures : $i")
+
                         var bitmap : Bitmap
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(mContext.contentResolver, pictureToPdfUri))
                         }
                         else {
-                            bitmap = MediaStore.Images.Media.getBitmap(mContext.contentResolver, pictureToPdfUri)
+                            bitmap = Media.getBitmap(mContext.contentResolver, pictureToPdfUri)
                         }
                         bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, false)
                         cnt += 1
                         val pageInfo = PageInfo.Builder(bitmap.width, bitmap.height,cnt+1).create()
                         val page = pdfDocument.startPage(pageInfo)
                         val paint = Paint()
+                        val canvas = page.canvas
+                        canvas.drawPaint(paint)
+                        canvas.drawBitmap(bitmap,0f,0f, null)
                         paint.color = Color.WHITE
                         pdfDocument.finishPage(page)
                         bitmap.recycle()
@@ -192,10 +194,9 @@ class PictureFragment : Fragment() {
                     catch (e:Exception) {
 
                     }
-
-                    pdfDocument.writeTo(fileOutputStream)
-                    pdfDocument.close()
                 }
+                pdfDocument.writeTo(fileOutputStream)
+                pdfDocument.close()
             }
             catch(e : Exception) {
 
@@ -281,7 +282,7 @@ class PictureFragment : Fragment() {
                     )
                 )
             } else {
-                MediaStore.Images.Media.getBitmap(mContext.contentResolver, pictureUriToBeSaved)
+                Media.getBitmap(mContext.contentResolver, pictureUriToBeSaved)
             }
             // create folder where we will save the images, no storage permission required
             val dir = File(mContext.getExternalFilesDir(null),Constants.PICTURE_FOLDER )

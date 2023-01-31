@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="4dp"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="10dp"
+        android:layout_marginBottom="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="65dp"
+                android:layout_height="80dp"
+                android:layout_marginEnd="10dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/baseline_image_black" />
+
+            <RelativeLayout
+                android:layout_toEndOf="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true">
+
+                <TextView
+                    android:id="@+id/nameTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:text="Pdf Name" />
+
+                <TextView
+                    android:id="@+id/pagesTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nameTv"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="2dp"
+                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:text="0 pages" />
+
+                <TextView
+                    android:id="@+id/sizeTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nameTv"
+                    android:layout_toEndOf="@+id/pagesTv"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="5dp"
+                    style="@style/TextAppearance.MaterialComponents.Caption"
+                    android:text="0 Bytes" />
+
+                <ImageButton
+                    android:id="@+id/moreBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:padding="2dp"
+                    android:src="@drawable/baseline_expand_more" />
+
+                <TextView
+                    android:id="@+id/dateTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/moreBtn"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="1dp"
+                    style="@style/TextAppearance.MaterialComponents.Caption"
+                    android:text="dd/mm/yyyy" />
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>
