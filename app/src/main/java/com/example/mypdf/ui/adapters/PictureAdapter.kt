@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -37,6 +38,9 @@ class PictureAdapter(
             intent.putExtra("pictureUri", "$pictureUri")
             context.startActivity(intent)
         }
+        holder.checkBox.setOnCheckedChangeListener {view, isChecked ->
+            pictureModel.checked = isChecked
+        }
     }
 
     override fun getItemCount(): Int {
@@ -46,6 +50,8 @@ class PictureAdapter(
 
     inner class PictureHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var pictureTv = itemView.findViewById<ImageView>(R.id.imageTv)
+        var checkBox = itemView.findViewById<CheckBox>(R.id.checkBox)
+
     }
 
 }
