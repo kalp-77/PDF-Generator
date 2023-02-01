@@ -47,6 +47,10 @@ class PictureAdapter(
         return pictureArrayList.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
 
     inner class PictureHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var pictureTv = itemView.findViewById<ImageView>(R.id.imageTv)

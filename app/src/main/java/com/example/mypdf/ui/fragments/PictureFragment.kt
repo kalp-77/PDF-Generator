@@ -25,6 +25,7 @@ import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -45,13 +46,9 @@ class PictureFragment : Fragment() {
 
     companion object {
         private const val TAG = "PICTURE_LIST_TAG"
-        private const val STORAGE_REQUEST_CODE = 100
-        private const val CAMERA_REQUEST_CODE = 101
     }
 
     private lateinit var mContext : Context
-    private lateinit var cameraPermission: Array<String>
-    private lateinit var storagePermission: Array<String>
     private lateinit var allPictureArrayList: ArrayList<PictureModel>
     private lateinit var pictureAdapter : PictureAdapter
     private lateinit var progressDialog: ProgressDialog
@@ -78,9 +75,6 @@ class PictureFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        cameraPermission = arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        storagePermission = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         // init ui views
         binding.addPictureFab.setOnClickListener{
@@ -332,7 +326,7 @@ class PictureFragment : Fragment() {
                         pickPictureCamera()
                     }
                     else {
-                        requestCameraPermission()
+                        requestCameraPermission.launch(arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE))
                     }
                 }
                 2->{
@@ -341,7 +335,7 @@ class PictureFragment : Fragment() {
                         pickPictureGallery()
                     }
                     else {
-                        requestStoragePermission()
+                        requestStoragePermission.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     }
                 }
             }
@@ -394,6 +388,8 @@ class PictureFragment : Fragment() {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, pictureUri)
         cameraActivityResultLauncher.launch(intent)
     }
+
+
     @RequiresApi(Build.VERSION_CODES.P)
     private val cameraActivityResultLauncher = registerForActivityResult<Intent,ActivityResult> (
         ActivityResultContracts.StartActivityForResult()
@@ -419,67 +415,44 @@ class PictureFragment : Fragment() {
         Log.d(TAG, "checkStoragePermission: ")
         return ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
-    private fun requestStoragePermission() {
-        Log.d(TAG, "requestStoragePermission: ")
-        requestPermissions(storagePermission, STORAGE_REQUEST_CODE)
-    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private val requestStoragePermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+        ActivityResultCallback { isGranted ->
+            if (isGranted) {
+                pickPictureGallery()
+            }
+            else {
+                toast("Permission denied...")
+            }
+        }
+    )
     private fun checkCameraPermission() : Boolean {
         Log.d(TAG, "checkCameraPermission: ")
         val cameraResult = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
         val storageResult = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
         return cameraResult && storageResult
     }
-    private fun requestCameraPermission(){
-        Log.d(TAG, "requestCameraPermission: ")
-        requestPermissions(cameraPermission, CAMERA_REQUEST_CODE)
-    }
-
     @RequiresApi(Build.VERSION_CODES.P)
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.d(TAG, "onRequestPermissionResult: ")
-
-        when(requestCode) {
-            CAMERA_REQUEST_CODE -> {
-                if(grantResults.isNotEmpty()) {
-                    val cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    val storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED
-                    if(cameraAccepted && storageAccepted) {
-                        Log.d(TAG, "onRequestPermissionResult: both permissions are granted (camera & storage), launch camera")
-                        pickPictureCamera()
-                    }
-                    else {
-                        Log.d(TAG, "onRequestPermissionResult: permissions are granted (camera & storage), permissions are required ")
-                        toast("Camera & Storage permissions are required")
-                    }
-                }
-                else {
-                    toast("cancelled")
-                }
+    private val requestCameraPermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions(),
+        ActivityResultCallback<Map<String,Boolean>>{ result ->
+            var areAllPermissionGranted = true
+            for(isGranted in result.values){
+                areAllPermissionGranted = areAllPermissionGranted && isGranted
             }
-            STORAGE_REQUEST_CODE -> {
-                if(grantResults.isNotEmpty()) {
-                    val storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    if (storageAccepted) {
-                        Log.d(TAG, "onRequestPermissionResult: storage permission granted, launch gallery intent")
-                        pickPictureGallery()
-                    } else {
-                        Log.d(TAG, "onRequestPermissionResult: gallery permission not granted by the user, can't launch gallery intent ")
-                        toast("Storage permission required")
-                    }
-                }
-                else {
-                    Log.d(TAG, "onRequestPermissionResult: neither allowed nor denied, Cancelled ")
-                    toast("Cancelled")
-                }
+            if(areAllPermissionGranted) {
+                pickPictureCamera()
+            }
+            else {
+                toast("Permission denied...")
+
             }
         }
-    }
+    )
+
+
     private fun toast(message:String) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
     }
