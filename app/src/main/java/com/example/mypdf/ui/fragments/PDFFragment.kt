@@ -1,6 +1,7 @@
 package com.example.mypdf.ui.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mypdf.R
 import com.example.mypdf.data.PdfModel
 import com.example.mypdf.databinding.FragmentPDFBinding
+import com.example.mypdf.ui.activities.PdfViewActivity
 import com.example.mypdf.ui.adapters.PdfAdapter
 import com.example.mypdf.utils.Constants
+import com.example.mypdf.utils.RvListenerPdf
 import java.io.File
 
 class PDFFragment : Fragment() {
@@ -45,7 +48,22 @@ class PDFFragment : Fragment() {
     }
     private fun loadPdfDocuments() {
         pdfArray = ArrayList()
-        adapterPdf = PdfAdapter(mContext,pdfArray)
+        adapterPdf = PdfAdapter(mContext,pdfArray, object : RvListenerPdf{
+            override fun onPdfClick(pdfModel: PdfModel, position: Int) {
+                val intent = Intent(mContext, PdfViewActivity::class.java)
+                intent.putExtra("pdfUri","${pdfModel.uri}")
+                startActivity(intent)
+            }
+
+            override fun onPdfMoreClick(
+                pdfModel: PdfModel,
+                position: Int,
+                holder: PdfAdapter.PdfHolder
+            ) {
+                TODO("Not yet implemented")
+            }
+
+        })
         pdfRv.adapter = adapterPdf
         val folder = File(mContext.getExternalFilesDir(null),Constants.PDF_FOLDER)
         if(folder.exists()) {

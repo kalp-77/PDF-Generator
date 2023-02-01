@@ -15,6 +15,9 @@
         android:theme="@style/Theme.MyPdf"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activities.PdfViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.ImageViewActivity"
             android:exported="false" />
         <activity

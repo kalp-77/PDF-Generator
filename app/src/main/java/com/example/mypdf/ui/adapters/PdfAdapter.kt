@@ -19,12 +19,13 @@ import com.bumptech.glide.Glide
 import com.example.mypdf.R
 import com.example.mypdf.data.PdfModel
 import com.example.mypdf.utils.Methods
-import java.util.concurrent.ExecutorService
+import com.example.mypdf.utils.RvListenerPdf
 import java.util.concurrent.Executors
 
 class PdfAdapter(
     private val context: Context,
-    private val pdfArrayList: ArrayList<PdfModel>
+    private val pdfArrayList: ArrayList<PdfModel>,
+    private val rvListenerPdf: RvListenerPdf
 ): RecyclerView.Adapter<PdfAdapter.PdfHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PdfHolder {
@@ -43,6 +44,12 @@ class PdfAdapter(
 
             holder.nameTv.text = name
             holder.dateTv.text = formattedDate
+            holder.itemView.setOnClickListener{
+                rvListenerPdf.onPdfClick(pdfModel,position)
+            }
+            holder.moreBtn.setOnClickListener {
+                rvListenerPdf.onPdfMoreClick(pdfModel,position,holder)
+            }
         }
         override fun getItemCount(): Int {
             return pdfArrayList.size
