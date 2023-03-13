@@ -232,7 +232,6 @@ class PictureFragment : Fragment() {
             }
         //}.onJoin
         Log.d(TAG, "inside of load")
-
         loadPictures()
         if(allPictureArrayList.isNotEmpty()){
             toast("Deleted")

@@ -90,7 +90,7 @@ class PdfAdapter(
                         }
                         else {
                             Log.d("TAG", "loadThumbnailFromPdffff: $pageCount")
-                            val currentPage = pdfRenderer.openPage(1)
+                            val currentPage = pdfRenderer.openPage(0)
                             thumbnailBitmap = Bitmap.createBitmap(currentPage.width, currentPage.height, Bitmap.Config.ARGB_8888)
                             currentPage.render(thumbnailBitmap, null,null,  PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
                         }

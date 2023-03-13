@@ -1,5 +1,6 @@
 package com.example.mypdf.ui.activities
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bumptech.glide.Glide
@@ -18,6 +19,8 @@ class ImageViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_view)
+        window.statusBarColor = Color.BLACK
+
 
         binding = ActivityImageViewBinding.inflate(layoutInflater)
         val view = binding.root

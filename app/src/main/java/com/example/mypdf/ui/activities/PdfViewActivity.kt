@@ -1,6 +1,7 @@
 package com.example.mypdf.ui.activities
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,8 @@ class PdfViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pdf_view)
+        window.statusBarColor = Color.BLACK
+
         binding = ActivityPdfViewBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)

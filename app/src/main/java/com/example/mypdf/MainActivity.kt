@@ -1,6 +1,8 @@
 package com.example.mypdf
 
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mypdf.databinding.ActivityMainBinding
 import com.example.mypdf.ui.fragments.PDFFragment
@@ -10,8 +12,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        window.statusBarColor = Color.BLACK
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
